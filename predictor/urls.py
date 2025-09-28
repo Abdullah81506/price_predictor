@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, api_views
 
 urlpatterns = [
     path('', views.predict_price, name='predict'),
@@ -7,5 +7,8 @@ urlpatterns = [
     path("history/", views.prediction_history, name="history"),
     path("clear_history/", views.clear_history, name="clear_history"),
     path("delete_history/<int:id>/", views.delete_history, name="delete_history"),
-    # path("debug_cities/", views.debug_cities, name="debug_cities"),
+
+    # API endpoints
+    path("api/predict/", api_views.predict_price_api, name="api_predict"),
+    path("api/history/", api_views.prediction_history_api, name="api_history"),
 ]
