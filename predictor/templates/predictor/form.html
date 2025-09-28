@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow p-4">
+    <h3 class="mb-3">Predict House Price</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <!-- House Details -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Size (sqft)</label>
+                <input type="number" class="form-control" name="size" required min="100" max="10000">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Rooms</label>
+                <input type="number" class="form-control" name="rooms" required min="1" max="10">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Bathrooms</label>
+                <input type="number" class="form-control" name="bathrooms" required min="1" max="10">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Age (years)</label>
+                <input type="number" class="form-control" name="age" required min="0" max="100">
+            </div>
+        </div>
+
+        <!-- Location -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="citySelect" class="form-label">Select City</label>
+                <select id="citySelect" name="city" class="form-select" required>
+                    <option value="" disabled selected>
+                        -- Select from {{ cities|length }} available cities --
+                    </option>
+                    {% for city in cities %}
+                        <option value="{{ city.city }}"
+                                data-lat="{{ city.lat }}"
+                                data-lon="{{ city.lon }}">
+                            {{ city.city }}, CA
+                        </option>
+                    {% endfor %}
+                </select>
+                <!-- Hidden inputs for lat/lon -->
+                <input type="hidden" name="latitude" id="latField">
+                <input type="hidden" name="longitude" id="lonField">
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary w-100">Predict</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const citySelect = document.getElementById('citySelect');
+    const latField = document.getElementById('latField');
+    const lonField = document.getElementById('lonField');
+
+    citySelect.addEventListener("change", function () {
+        const selected = citySelect.options[citySelect.selectedIndex];
+        latField.value = selected.dataset.lat;
+        lonField.value = selected.dataset.lon;
+        console.log("Selected city:", selected.value, 
+                    "Lat:", latField.value, 
+                    "Lon:", lonField.value);
+    });
+});
+</script>
+{% endblock %}

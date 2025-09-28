@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow p-4">
+    <h3 class="mb-3">Model Evaluation</h3>
+
+    {% if mse %}
+        <p><strong>MSE:</strong> {{ mse|floatformat:2 }}</p>
+        <p><strong>MAE:</strong> {{ mae|floatformat:2 }}</p>
+        <p><strong>RMSE:</strong> {{ rmse|floatformat:2 }}</p>
+        <p><strong>R²:</strong> {{ r2|floatformat:2 }}</p>
+        <p><strong>Intercept (b):</strong> {{ intercept }}</p>
+        <h4>Model Coefficients:</h4>
+        <ul>
+            {% for name, value in coefficients.items %}
+                <li>{{ name|capfirst }}: {{ value|floatformat:2 }}</li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>No metrics found. Run train_model.py first.</p>
+    {% endif %}
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h5>Feature Importance</h5>
+            <canvas id="featChart" width="400" height="300"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h5>Actual vs Predicted</h5>
+            <canvas id="scatterChart" width="400" height="300"></canvas>
+        </div>
+    </div>
+
+    <h5 class="mt-4">Test Results</h5>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Size (sqft)</th>
+                <th>Rooms</th>
+                <th>Bathrooms</th>
+                <th>Age (years)</th>
+                <th>Actual Price (k)</th>
+                <th>Predicted Price (k)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.size }}</td>
+                <td>{{ result.rooms }}</td>
+                <td>{{ result.bathrooms }}</td>
+                <td>{{ result.age }}</td>
+                <td>{{ result.actual_price }}</td>
+                <td>{{ result.predicted_price|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center">No evaluation results found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // Data passed from view as JSON strings
+    const featureNames = {{ feature_names_json|safe }};
+    const importances = {{ importances_json|safe }};
+    const scatterPoints = {{ scatter_points_json|safe }};
+    const perfectFit = {{ perfect_fit_json|safe }};
+
+    // ----- Feature importance bar chart -----
+    (function() {
+        const ctx = document.getElementById('featChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: featureNames,
+                datasets: [{
+                    label: 'Relative importance (%)',
+                    data: importances,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index' }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 100, title: { display: true, text: 'Percent' } }
+                }
+            }
+        });
+    })();
+
+    // ----- Actual vs Predicted scatter plot -----
+    (function() {
+        const ctx2 = document.getElementById('scatterChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Actual vs Predicted',
+                        data: scatterPoints,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 0.9)'
+                    },
+                    {
+                        label: 'Perfect Fit (y = x)',
+                        type: 'line',
+                        data: perfectFit,
+                        borderColor: 'rgba(0, 0, 0, 0.8)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0,
+                        tension: 0 // straight line
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true } },
+                scales: {
+                    x: { title: { display: true, text: 'Actual Price (k)' } },
+                    y: { title: { display: true, text: 'Predicted Price (k)' } }
+                },
+            }
+        });
+    })();
+</script>
+{% endblock %}
