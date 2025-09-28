@@ -36,8 +36,6 @@ Users can enter house details and location to get an estimated price, view predi
 ![Evaluation Screenshot](screenshots/evaluate3.png)
 
 
-*(Replace with your own screenshots)*
-
 ---
 
 ## 🏠 Usage
@@ -65,11 +63,6 @@ Users can enter house details and location to get an estimated price, view predi
 
 ---
 
-## 📄 License
-
-This project is **MIT licensed**. See [LICENSE](LICENSE) for details.
-
----
 
 ## 🙏 Acknowledgements
 
