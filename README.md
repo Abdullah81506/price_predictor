@@ -1,6 +1,6 @@
-# California House Price Predictor
+# House Price Predictor
 
-A Django web application that predicts house prices in California cities using **Linear Regression**.  
+A Django web application that predicts house prices in cities using **Linear Regression**.  
 Users can enter house details and location to get an estimated price, view prediction history, and analyze model performance.
 
 ---
