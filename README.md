@@ -19,6 +19,7 @@ Users can enter house details and location to get an estimated price, view predi
   - Coefficients and feature importance
   - Actual vs predicted scatter plot
 - Interactive charts with **Chart.js**.
+
 Note: This project uses a synthetic (dummy) dataset created for learning and demonstration purposes. Predictions are not based on real-world housing market data.
 
 ---
